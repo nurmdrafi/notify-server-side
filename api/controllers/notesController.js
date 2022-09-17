@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Note = require("../models/notesModel");
 
+// get all notes
 exports.getAllNotes = async (req, res) => {
   try {
     const notes = await Note.find({});
@@ -10,30 +11,37 @@ exports.getAllNotes = async (req, res) => {
   }
 };
 
+// get by email
+exports.getByEmail = async (req, res) => {
+  try {
+    const email = req.params.email;
+    console.log()
+    const notes = await Note.find({ email: email });
+    res.send(notes);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+};
+
+// create note
 exports.createNote = (req, res) => {
   const note = new Note({
     _id: mongoose.Types.ObjectId(),
     title: req.body.title,
     body: req.body.body,
+    email: req.body.email,
   });
-  return note
-    .save()
-    .then((newNote) => {
-      return res.status(201).json({
-        success: true,
-        message: "New note created successfully",
-        Note: newNote,
-      });
-    })
-    .catch((error) => {
-      res.status(500).json({
-        success: false,
-        message: "Server error. Please try again.",
-        error: error.message,
-      });
+  try {
+    const noteToSave = note.save();
+    res.status(201).json(noteToSave);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
     });
+  }
 };
 
+// delete note
 exports.deleteNote = async (req, res) => {
   try {
     const note = await Note.findByIdAndDelete(req.params.id);
@@ -46,6 +54,7 @@ exports.deleteNote = async (req, res) => {
   }
 };
 
+// update note
 exports.updateNote = async (req, res) => {
   try {
     const note = await Note.findByIdAndUpdate(req.params.id, req.body);
@@ -56,6 +65,7 @@ exports.updateNote = async (req, res) => {
   }
 };
 
+// get note by id
 exports.getNoteById = async (req, res) => {
   try {
     const note = await Note.findById(req.params.id);
