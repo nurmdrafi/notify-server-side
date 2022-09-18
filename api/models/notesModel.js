@@ -17,6 +17,11 @@ const noteSchema = new mongoose.Schema({
     trim: true,
     require: true,
   },
+  time: {
+    type: String,
+    trim: true,
+    require: true,
+  },
 });
 
 module.exports = mongoose.model("Note", noteSchema);

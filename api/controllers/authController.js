@@ -5,6 +5,7 @@ const accessTokenSecret = process.env.TOKEN_SECRET;
 
 // authenticate
 exports.authenticate = (req, res) => {
+  console.log(req.body);
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       next(err);

@@ -1,3 +1,4 @@
+const { query } = require("express");
 const mongoose = require("mongoose");
 const Note = require("../models/notesModel");
 
@@ -15,7 +16,7 @@ exports.getAllNotes = async (req, res) => {
 exports.getByEmail = async (req, res) => {
   try {
     const email = req.params.email;
-    console.log()
+    console.log();
     const notes = await Note.find({ email: email });
     res.send(notes);
   } catch (err) {
@@ -57,9 +58,11 @@ exports.deleteNote = async (req, res) => {
 // update note
 exports.updateNote = async (req, res) => {
   try {
-    const note = await Note.findByIdAndUpdate(req.params.id, req.body);
-    await Note.save();
-    res.send(note);
+    const note = await Note.findById(req.params.id);
+    note.title = req.body.title;
+    note.body = req.body.body;
+    await note.save();
+    await res.status(200).send(note);
   } catch (err) {
     res.status(500).send(err);
   }
