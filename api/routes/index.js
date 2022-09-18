@@ -1,8 +1,10 @@
 const routes = require("express").Router(),
   userRoutes = require("./userRoutes"),
-  notesRoutes = require("./notesRoutes");
+  noteRoutes = require("./noteRoutes"),
+  authRoutes = require("./authRoutes");
 
-routes.use("/users", userRoutes);
-routes.use("/notes", notesRoutes);
+routes.use("/user", userRoutes);
+routes.use("/note", noteRoutes);
+routes.use("/auth", authRoutes);
 
 module.exports = routes;

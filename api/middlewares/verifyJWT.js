@@ -2,12 +2,12 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const accessTokenSecret = process.env.TOKEN_SECRET;
 
-exports.authenticateJWT = (req, res, next) => {
+exports.verifyJWT = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    const access_token = authHeader.split(" ")[1];
+    const accessToken = authHeader.split(" ")[1];
 
-    jwt.verify(access_token, accessTokenSecret, (err, decoded) => {
+    jwt.verify(accessToken, accessTokenSecret, (err, decoded) => {
       if (err) {
         return res.status(403).send({ message: "Forbidden Access" });
       }

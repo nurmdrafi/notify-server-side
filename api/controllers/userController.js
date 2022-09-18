@@ -1,9 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const accessTokenSecret = process.env.TOKEN_SECRET;
 
 // get all users
 exports.getALLUsers = async (req, res) => {
@@ -46,35 +43,4 @@ exports.deleteUser = async (req, res) => {
   } catch (err) {
     res.status(500).send(err);
   }
-};
-
-// authenticate
-exports.authenticate = (req, res) => {
-  User.findOne({ email: req.body.email }, function (err, userInfo) {
-    if (err) {
-      next(err);
-    } else {
-      if (bcrypt.compareSync(req.body.password, userInfo.password)) {
-        const access_token = jwt.sign(
-          { email: userInfo.email },
-          accessTokenSecret,
-          {
-            expiresIn: "1h",
-          }
-        );
-
-        res.json({
-          status: "success",
-          message: "user found!!!",
-          data: access_token,
-        });
-      } else {
-        res.json({
-          status: "error",
-          message: "Invalid email/password!!!",
-          data: null,
-        });
-      }
-    }
-  });
 };
