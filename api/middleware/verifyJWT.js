@@ -14,7 +14,7 @@ exports.verifyJWT = (req, res, next) => {
       req.decoded = decoded;
       next();
     });
-  } catch (err) {
+  } catch (error) {
     res.status(401).send({ message: "UnAuthorized Access" });
   }
 };

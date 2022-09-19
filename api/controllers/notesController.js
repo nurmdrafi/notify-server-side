@@ -29,6 +29,7 @@ exports.createNote = (req, res) => {
     title: req.body.title,
     body: req.body.body,
     email: req.body.email,
+    time: req.body.time,
   });
   try {
     const noteToSave = note.save();

@@ -4,57 +4,69 @@ const jwt = require("jsonwebtoken");
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
-// authenticate
-exports.authenticate = (req, res) => {
-  User.findOne({ email: req.body.email }, function (err, user) {
-    if (err) {
-      next(err);
-    } else {
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        const accessToken = jwt.sign(
-          { email: req.body.email },
-          accessTokenSecret,
-          {
-            expiresIn: "2h",
-          }
-        );
-        const refreshToken = jwt.sign(
-          { email: req.body.email },
-          refreshTokenSecret,
-          {
-            expiresIn: "24h",
-          }
-        );
+// get token
+exports.getToken = async (req, res) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
 
-        res.json({
-          success: true,
-          accessToken,
-          refreshToken,
-        });
-      } else {
-        res.json({
-          success: false,
-          error: "Invalid email/password!!!",
-        });
-      }
+    const currentUser = await User.findOne({ email: email });
+    // evaluate password
+    const isMatch = await bcrypt.compare(password, currentUser.password);
+    if (isMatch) {
+      // create JWTs
+      const accessToken = jwt.sign(
+        { email: req.body.email },
+        accessTokenSecret,
+        { expiresIn: "15m" }
+      );
+      const refreshToken = jwt.sign(
+        { email: req.body.email },
+        refreshTokenSecret,
+        {
+          expiresIn: "1d",
+        }
+      );
+      res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      res.json({
+        success: true,
+        accessToken,
+      });
+    } else {
+      res.json({
+        success: false,
+        error: "Invalid email/password!!!",
+      });
     }
-  });
+  } catch (error) {
+    res.status(400).send(error);
+  }
 };
 
-exports.verifyRefresh = (req, res) => {
-  const { email, refreshToken } = req.body;
-  const isValid = verifyRefreshToken(email, refreshToken);
-  console.log("verifyRefresh");
+exports.verifyRefreshToken = (req, res) => {
+  try {
+    const refreshToken = req?.cookies?.jwt;
 
-  if (!isValid) {
-    return res
-      .status(401)
-      .json({ success: false, error: "Invalid token, try login again" });
+    jwt.verify(refreshToken, refreshTokenSecret, (err, decoded) => {
+      if (err) {
+        return res.status(403).send({ message: "Forbidden Access" });
+      } else {
+        const accessToken = jwt.sign(
+          {
+            email: req.body.email,
+          },
+          accessTokenSecret,
+          {
+            expiresIn: "20m",
+          }
+        );
+        return res.json({ success: true, accessToken });
+      }
+    });
+  } catch (error) {
+    return res.status(406).json({ message: "Unauthorized" });
   }
-
-  const accessToken = jwt.sign({ email: email }, "accessSecret", {
-    expiresIn: "2m",
-  });
-
-  return res.status(200).json({ success: true, accessToken });
 };

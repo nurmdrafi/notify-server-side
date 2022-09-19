@@ -1,9 +1,9 @@
 const routes = require("express").Router();
 const notesController = require("../controllers/notesController");
-const { verifyJWT } = require("../middlewares/verifyJWT");
+const { verifyJWT } = require("../middleware/verifyJWT");
 
 routes.get("/getAll", verifyJWT, notesController.getAllNotes);
-routes.get("/getOne/:id", notesController.getNoteById);
+routes.get("/getOne/:id", verifyJWT, notesController.getNoteById);
 routes.get("/getByEmail/:email", verifyJWT, notesController.getByEmail);
 routes.post("/post", verifyJWT, notesController.createNote);
 routes.delete("/delete/:id", verifyJWT, notesController.deleteNote);
