@@ -1,4 +1,3 @@
-const { query } = require("express");
 const mongoose = require("mongoose");
 const Note = require("../models/notesModel");
 
@@ -16,7 +15,6 @@ exports.getAllNotes = async (req, res) => {
 exports.getByEmail = async (req, res) => {
   try {
     const email = req.params.email;
-    console.log();
     const notes = await Note.find({ email: email });
     res.send(notes);
   } catch (err) {

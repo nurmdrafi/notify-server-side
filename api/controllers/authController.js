@@ -1,11 +1,11 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const accessTokenSecret = process.env.TOKEN_SECRET;
+const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
+const refreshTokenSecret = process.env.REFRESH_TOKEN_SECRET;
 
 // authenticate
 exports.authenticate = (req, res) => {
-  console.log(req.body);
   User.findOne({ email: req.body.email }, function (err, user) {
     if (err) {
       next(err);
@@ -15,22 +15,46 @@ exports.authenticate = (req, res) => {
           { email: req.body.email },
           accessTokenSecret,
           {
-            expiresIn: "1h",
+            expiresIn: "2h",
+          }
+        );
+        const refreshToken = jwt.sign(
+          { email: req.body.email },
+          refreshTokenSecret,
+          {
+            expiresIn: "24h",
           }
         );
 
         res.json({
-          status: "success",
-          message: "user found!!!",
-          data: accessToken,
+          success: true,
+          accessToken,
+          refreshToken,
         });
       } else {
         res.json({
-          status: "error",
-          message: "Invalid email/password!!!",
-          data: null,
+          success: false,
+          error: "Invalid email/password!!!",
         });
       }
     }
   });
+};
+
+exports.verifyRefresh = (req, res) => {
+  const { email, refreshToken } = req.body;
+  const isValid = verifyRefreshToken(email, refreshToken);
+  console.log("verifyRefresh");
+
+  if (!isValid) {
+    return res
+      .status(401)
+      .json({ success: false, error: "Invalid token, try login again" });
+  }
+
+  const accessToken = jwt.sign({ email: email }, "accessSecret", {
+    expiresIn: "2m",
+  });
+
+  return res.status(200).json({ success: true, accessToken });
 };
