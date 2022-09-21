@@ -8,13 +8,14 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 /* app configuration */
-// enable send cookies
 const corsConfig = {
   origin: true,
   credentials: true,
 };
+
 app.use(cors(corsConfig));
 app.options("*", cors(corsConfig));
+
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
