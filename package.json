@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "start-dev": "nodemon app.js",
-    "build": "npm run build -o app ."
+    "build": "npm run build -i ./app.js -o ./dist"
   },
   "keywords": [],
   "author": "",
