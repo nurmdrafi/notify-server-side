@@ -21,8 +21,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // testing
-app.get("/messages", (req, res) => {
-  res.send("Hello");
+app.get("/hello", (req, res) => {
+  res.send({ message: "Hello World" });
 });
 
 /* mongodb setup */

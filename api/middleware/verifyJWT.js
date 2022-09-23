@@ -15,6 +15,6 @@ exports.verifyJWT = (req, res, next) => {
       next();
     });
   } catch (error) {
-    res.status(401).send({ message: "UnAuthorized Access" });
+    return res.status(401).send({ message: "UnAuthorized Access" });
   }
 };

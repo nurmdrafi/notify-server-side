@@ -12,10 +12,9 @@ const noteSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  email: {
-    type: String,
-    trim: true,
-    require: true,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
   time: {
     type: String,
