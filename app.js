@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // testing
-app.get("/hello", (req, res) => {
+app.get("/", (req, res) => {
   res.send({ message: "Hello World" });
 });
 
