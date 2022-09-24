@@ -1,20 +1,10 @@
 const mongoose = require("mongoose");
 const Note = require("../models/notesModel");
 
-// get all notes for admin
-/* exports.getAllNotes = async (req, res) => {
-  try {
-    const notes = await Note.find({});
-    res.send(notes);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-}; */
-
-// get notes for user
+// get notes by user
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.decoded.userId });
+    const notes = await Note.find({ userId: req.decoded.userId });
     res.send(notes);
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" });
@@ -22,7 +12,7 @@ exports.getNotes = async (req, res) => {
 };
 
 // create note
-exports.createNote = (req, res) => {
+exports.createNote = async (req, res) => {
   try {
     const note = new Note({
       _id: mongoose.Types.ObjectId(),
@@ -31,7 +21,7 @@ exports.createNote = (req, res) => {
       userId: req.decoded.userId,
       time: req.body.time,
     });
-    note.save();
+    await note.save();
     res.status(201).json({ message: "New Note Created" });
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" });
@@ -45,7 +35,7 @@ exports.deleteNote = async (req, res) => {
     // check with decoded userId
     if (`${note.userId}` === req.decoded.userId) {
       await Note.findByIdAndDelete(req.params.id);
-      res.status(200).send();
+      res.status(200).json({ message: "Note Deleted" });
     }
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" });
@@ -62,13 +52,23 @@ exports.updateNote = async (req, res) => {
       note.title = req.body.title;
       note.body = req.body.body;
       // save
-      note.save();
-      res.status(200).send(note);
+      await note.save();
+      res.status(200).json({ message: "Note Updated" });
     }
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
+
+// get all notes for admin
+/* exports.getAllNotes = async (req, res) => {
+  try {
+    const notes = await Note.find({});
+    res.send(notes);
+  } catch (err) {
+    res.status(401).json({ message: "Unauthorized" });
+  }
+}; */
 
 // get note by id
 /* exports.getNoteById = async (req, res) => {

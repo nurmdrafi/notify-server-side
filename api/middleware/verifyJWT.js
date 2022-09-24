@@ -9,10 +9,12 @@ exports.verifyJWT = (req, res, next) => {
 
     jwt.verify(accessToken, accessTokenSecret, (err, decoded) => {
       if (err) {
-        return res.status(403).send({ message: "Forbidden Access" });
+        res.status(403).send({ message: "Forbidden Access" });
+      } else {
+        req.decoded = decoded;
+        console.log(decoded, "verifyJWT")
+        next();
       }
-      req.decoded = decoded;
-      next();
     });
   } catch (error) {
     return res.status(401).send({ message: "UnAuthorized Access" });

@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-const noteSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
+const noteSchema = new Schema({
+  _id: Schema.Types.ObjectId,
   title: {
     type: String,
     trim: true,
@@ -13,12 +14,12 @@ const noteSchema = new mongoose.Schema({
     required: true,
   },
   userId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   time: {
-    type: String,
-    trim: true,
+    type: Date,
     require: true,
   },
 });
