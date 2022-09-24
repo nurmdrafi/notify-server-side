@@ -12,7 +12,6 @@ exports.verifyJWT = (req, res, next) => {
         res.status(403).send({ message: "Forbidden Access" });
       } else {
         req.decoded = decoded;
-        console.log(decoded, "verifyJWT")
         next();
       }
     });
