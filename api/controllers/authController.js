@@ -105,9 +105,10 @@ exports.handleLogout = async (req, res) => {
 exports.verifyRefreshToken = async (req, res) => {
   try {
     const prevRefreshToken = req?.cookies?.jwt;
+    const currentUser = User.findOne({refreshToken: prevRefreshToken})
 
     jwt.verify(prevRefreshToken, refreshTokenSecret, (err, decoded) => {
-      if (err) {
+      if (err || !currentUser) {
         res.status(403).send({ message: "Forbidden Access" });
       } else {
         const payload = {
