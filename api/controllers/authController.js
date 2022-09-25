@@ -1,5 +1,4 @@
 const User = require("../models/userModel");
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET;
@@ -14,12 +13,12 @@ exports.handleRegister = async (req, res) => {
     const isExist = await User.findOne({ email: email });
     if (!isExist) {
       const user = new User({
-        _id: mongoose.Types.ObjectId(),
         username: username,
         email: email,
         password: password,
         role: "user",
         refreshToken: "",
+        notes: [],
       });
       await user.save();
       res.status(201).json({ message: "New User Registered" });
@@ -45,7 +44,7 @@ exports.handleLogin = async (req, res) => {
     if (currentUser && isMatch) {
       // create tokens
       const payload = {
-        userId: currentUser._id,
+        _id: currentUser._id,
         username: currentUser.username,
         email: currentUser.email,
         role: currentUser.role,
@@ -105,14 +104,14 @@ exports.handleLogout = async (req, res) => {
 exports.verifyRefreshToken = async (req, res) => {
   try {
     const prevRefreshToken = req?.cookies?.jwt;
-    const currentUser = User.findOne({refreshToken: prevRefreshToken})
+    const currentUser = User.findOne({ refreshToken: prevRefreshToken });
 
     jwt.verify(prevRefreshToken, refreshTokenSecret, (err, decoded) => {
       if (err || !currentUser) {
         res.status(403).send({ message: "Forbidden Access" });
       } else {
         const payload = {
-          userId: decoded.userId,
+          _id: decoded._id,
           username: decoded.username,
           email: decoded.email,
           role: decoded.role,

@@ -3,7 +3,6 @@ const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
 const userSchema = new Schema({
-  _id: Schema.Types.ObjectId,
   username: {
     type: String,
     trim: true,
@@ -28,6 +27,7 @@ const userSchema = new Schema({
   refreshToken: {
     type: String,
   },
+  notes: [{ type: Schema.Types.ObjectId, ref: "Note" }],
 });
 
 // hashed user password before saving into database
