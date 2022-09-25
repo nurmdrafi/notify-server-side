@@ -1,11 +1,14 @@
 const Note = require("../models/notesModel");
 const User = require("../models/userModel");
 
+
 // get notes by user
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({}).populate("user", "username email -_id");
-    res.send(notes);
+    const user = await User.findById({ _id: req.decoded._id }).populate(
+      "notes"
+    );
+    res.send(user.notes);
   } catch (err) {
     res.status(401).json({ message: "Unauthorized" });
   }
