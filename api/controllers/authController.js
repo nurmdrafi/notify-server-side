@@ -28,7 +28,11 @@ exports.handleRegister = async (req, res) => {
       });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    if (error.name === "ValidationError") {
+      res.status(400).send({ message: error.message });
+    } else {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
 

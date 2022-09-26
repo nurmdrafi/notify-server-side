@@ -9,7 +9,7 @@ exports.getNotes = async (req, res) => {
       "notes"
     );
     res.send(user.notes);
-  } catch (err) {
+  } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
@@ -21,7 +21,7 @@ exports.createNote = async (req, res) => {
       title: req.body.title,
       body: req.body.body,
       user: req.decoded._id,
-      createdAt: req.body.createdAt,
+      createdAt: new Date().toLocaleDateString(),
     });
     const note = await newNote.save();
 
@@ -34,8 +34,12 @@ exports.createNote = async (req, res) => {
       }
     );
     res.status(201).json({ message: "New Note Created" });
-  } catch (err) {
-    res.status(401).json({ message: "Unauthorized" });
+  } catch (error) {
+    if(error.name === "ValidationError"){
+      res.status(400).send({ message: error.message });
+    } else{
+      res.status(401).json({ message: "Unauthorized" });
+    }
   }
 };
 
@@ -56,7 +60,7 @@ exports.deleteNote = async (req, res) => {
       );
       res.status(200).json({ message: "Note Deleted" });
     }
-  } catch (err) {
+  } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
@@ -74,7 +78,7 @@ exports.updateNote = async (req, res) => {
       await note.save();
       res.status(200).json({ message: "Note Updated" });
     }
-  } catch (err) {
+  } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
 };
@@ -84,7 +88,7 @@ exports.updateNote = async (req, res) => {
   try {
     const notes = await Note.find({});
     res.send(notes);
-  } catch (err) {
+  } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
   }
 }; */
@@ -94,7 +98,7 @@ exports.updateNote = async (req, res) => {
   try {
     const note = await Note.findById(req.params._id);
     res.send(note);
-  } catch (err) {
-    res.status(500).send(err);
+  } catch (error) {
+    res.status(500).send(error);
   }
 }; */
