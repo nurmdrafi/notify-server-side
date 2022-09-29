@@ -92,13 +92,19 @@ exports.handleLogout = async (req, res) => {
   try {
     const cookies = req.cookies;
     const refreshToken = cookies?.jwt;
+
     // delete refresh token from database
     await User.updateOne(
       { refreshToken: refreshToken },
       { $set: { refreshToken: "" } }
     );
+
     // delete refresh token from cookie
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "None",
+      secure: true,
+    });
     res.status(200).json({ message: "User Logout" });
   } catch (error) {
     res.status(401).json({ message: "Unauthorized" });
