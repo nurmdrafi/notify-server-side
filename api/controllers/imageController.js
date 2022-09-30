@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 exports.handleUploadImage = async (req, res) => {
   try {
     const image = new Image({
-      note: req.body.note_id,
       url: req.body.url,
       path: req.body.path,
     });
@@ -25,7 +24,6 @@ exports.handleUploadImage = async (req, res) => {
 
 exports.handleUpdatePrevNoteImages = async (req, res) => {
   try {
-    console.log();
     await Note.updateOne(
       {
         _id: req.body._id,
@@ -38,7 +36,7 @@ exports.handleUpdatePrevNoteImages = async (req, res) => {
   }
 };
 
-exports.handleGetImageGallery = async (req, res) => {
+/* exports.handleGetImageGallery = async (req, res) => {
   try {
     const gallery = await Image.find({
       user: mongoose.Types.ObjectId(req.decoded._id),
@@ -48,6 +46,6 @@ exports.handleGetImageGallery = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
-};
+}; */
 
-exports.handleDeleteImage = (req, res) => {};
+// exports.handleDeleteImage = (req, res) => {};
