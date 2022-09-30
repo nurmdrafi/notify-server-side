@@ -1,5 +1,6 @@
 const Image = require("../models/imageModel");
 const Note = require("../models/notesModel");
+const mongoose = require("mongoose");
 
 // upload Image
 exports.handleUploadImage = async (req, res) => {
@@ -22,15 +23,28 @@ exports.handleUploadImage = async (req, res) => {
   }
 };
 
-exports.handleGetImageByNoteId = async (req, res) => {
+exports.handleUpdatePrevNoteImages = async (req, res) => {
   try {
-    const image = await Note.findById({ _id: req.params.id }).populate(
-      "images"
+    console.log();
+    await Note.updateOne(
+      {
+        _id: req.body._id,
+      },
+      { $pull: { images: req.body.url } }
     );
-    // check with decoded user
-    if (`${image.user}` === req.decoded._id) {
-      res.status(200).json(image);
-    }
+    res.json({ message: "Image Deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+exports.handleGetImageGallery = async (req, res) => {
+  try {
+    const gallery = await Image.find({
+      user: mongoose.Types.ObjectId(req.decoded._id),
+    });
+
+    res.status(200).json(gallery);
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
