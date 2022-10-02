@@ -1,51 +1,66 @@
 const Image = require("../models/imageModel");
 const Note = require("../models/notesModel");
-const mongoose = require("mongoose");
 
-// upload Image
+// upload new Image
 exports.handleUploadImage = async (req, res) => {
   try {
-    const image = new Image({
-      url: req.body.url,
-      path: req.body.path,
-    });
-    await image.save();
-    await Note.updateOne(
-      {
-        _id: req.body.note_id,
-      },
-      { $push: { images: image.url } }
-    );
-    res.json({ message: "Image Uploaded" });
+    const note = await Note.findById({ _id: req.body.note_id });
+
+    // check with decoded user
+    if (`${note.user}` === req.decoded._id) {
+      const image = new Image({
+        url: req.body.url,
+        path: req.body.path,
+      });
+      await image.save();
+      await Note.updateOne(
+        {
+          _id: req.body.note_id,
+        },
+        { $push: { images: image.url } }
+      );
+      res.json({ message: "Image Uploaded" });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
 
+// delete from note's
 exports.handleUpdatePrevNoteImages = async (req, res) => {
   try {
-    await Note.updateOne(
-      {
-        _id: req.body._id,
-      },
-      { $pull: { images: req.body.url } }
-    );
-    res.json({ message: "Image Deleted" });
+    const note = await Note.findById({ _id: req.body.note_id });
+
+    // check with decoded user
+    if (`${note.user}` === req.decoded._id) {
+      await Note.updateOne(
+        {
+          _id: req.body.note_id,
+        },
+        { $pull: { images: req.body.url } }
+      );
+      res.json({ message: "Image Deleted" });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(401).json({ message: "Unauthorized" });
   }
 };
 
-/* exports.handleGetImageGallery = async (req, res) => {
+exports.handleAddImgFromGallery = async (req, res) => {
   try {
-    const gallery = await Image.find({
-      user: mongoose.Types.ObjectId(req.decoded._id),
-    });
+    const note = await Note.findById({ _id: req.body.note_id });
 
-    res.status(200).json(gallery);
+    // check with decoded user
+    if (`${note.user}` === req.decoded._id) {
+      await Note.updateOne(
+        {
+          _id: req.body.note_id,
+        },
+        { $push: { images: req.body.url } }
+      );
+      res.json({ message: "Image Added" });
+    }
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(401).json({ message: "Unauthorized" });
   }
-}; */
-
-// exports.handleDeleteImage = (req, res) => {};
+};

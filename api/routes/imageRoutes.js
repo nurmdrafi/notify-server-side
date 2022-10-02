@@ -3,7 +3,15 @@ const imageController = require("../controllers/imageController");
 const verifyJWT = require("../middleware/verifyJWT");
 
 routes.post("/upload", verifyJWT, imageController.handleUploadImage);
-routes.patch("/upPrevNoteImg", imageController.handleUpdatePrevNoteImages);
-// routes.get("/gallery", verifyJWT, imageController.handleGetImageGallery);
+routes.patch(
+  "/delPrevNoteImg",
+  verifyJWT,
+  imageController.handleUpdatePrevNoteImages
+);
+routes.patch(
+  "/addFromGallery",
+  verifyJWT,
+  imageController.handleAddImgFromGallery
+);
 
 module.exports = routes;
