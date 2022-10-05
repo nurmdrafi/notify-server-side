@@ -18,7 +18,6 @@ exports.handleRegister = async (req, res) => {
         password: password,
         role: "user",
         refreshToken: "",
-        notes: [],
       });
       await user.save();
       res.status(201).json({ message: "New User Registered" });

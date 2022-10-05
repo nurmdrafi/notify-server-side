@@ -70,13 +70,3 @@ exports.updateNote = async (req, res) => {
   }
 };
 
-//////////////////////////////////////////////
-// get all notes for admin
-/* exports.getAllNotes = async (req, res) => {
-  try {
-    const notes = await Note.find({});
-    res.send(notes);
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized" });
-  }
-}; */
