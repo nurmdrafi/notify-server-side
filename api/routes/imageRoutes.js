@@ -1,6 +1,6 @@
 const routes = require("express").Router();
 const imageController = require("../controllers/imageController");
-const verifyJWT = require("../middleware/verifyJWT");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 routes.post("/upload", verifyJWT, imageController.handleUploadImage);
 routes.patch(

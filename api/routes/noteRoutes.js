@@ -1,6 +1,6 @@
 const routes = require("express").Router();
 const notesController = require("../controllers/notesController");
-const  verifyJWT  = require("../middleware/verifyJWT");
+const  verifyJWT  = require("../middlewares/verifyJWT");
 
 // routes.get("/getAll", verifyJWT, notesController.getAllNotes);
 routes.get("/get", verifyJWT, notesController.getNotes);
